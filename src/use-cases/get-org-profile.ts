@@ -1,0 +1,25 @@
+import { IOrganizationsRepository } from "@/repositories/I-organizations-repository";
+import { Organization } from "@prisma/client";
+import { ResourceNotFoundError } from "./errors/resource-not-found-error";
+
+interface GetOrgProfileUseCaseRequest {
+  orgId: string
+}
+
+interface GetOrgProfileUseCaseResponse {
+  org: Organization
+}
+
+export class GetOrgProfileUseCase {
+  constructor(private orgsRepository: IOrganizationsRepository) { }
+
+  async execute({ orgId }: GetOrgProfileUseCaseRequest): Promise<GetOrgProfileUseCaseResponse> {
+    const org = await this.orgsRepository.findById(orgId)
+
+    if (!org) {
+      throw new ResourceNotFoundError()
+    }
+
+    return { org, }
+  }
+}
